@@ -1,66 +1,67 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:torrico_import/services/globals.dart';
+import 'package:http/http.dart' as http;
 
-class ProveedorServices {
+class ProductoServices {
   var status;
-
   var token;
-
-  Future<void> addProveedor(String nombreempresa, String razonsocial,
-      String nombreproveedor, int numcontacto) async {
+  Future<void> addProducto(String nombreproducto, String descripcion,
+      String unidad, int existencia, int costo) async {
     try {
-      var url = Uri.parse('${baseURL}proveedor/store');
+      var url = Uri.parse('${baseURL}productos/store');
       final response = await http.post(
         url,
         headers: {
           'Accept': 'application/json',
         },
         body: {
-          'nombreempresa': nombreempresa,
-          'razonsocial': razonsocial,
-          'nombreproveedor': nombreproveedor,
-          'numcontacto': numcontacto.toString()
+          'nombreproducto': nombreproducto,
+          'descripcion': descripcion,
+          'unidad': unidad,
+          'existencia': existencia.toString(),
+          'costo': costo.toString()
         },
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print('Proveedor creado exitosamente');
+        print('Producto creado exitosamente');
       } else {
-        print('Error al crear proveedor: ${response.body}');
+        print('Error al crear el producto: ${response.body}');
       }
     } catch (e) {
       print('Error: $e');
     }
   }
 
-  void editProveedor(String id, String nombreempresa, String razonsocial,
-      String nombreproveedor, int numcontacto) async {
+  void editProducto(String id, nombreproducto, String descripcion,
+      String unidad, int existencia, int costo) async {
     final prefs = await SharedPreferences.getInstance();
     const key = 'token';
     final value = prefs.get(key) ?? 0;
-    var url = Uri.parse('${baseURL}proveedor/update/$id');
+    var url = Uri.parse('${baseURL}productos/update/$id');
     http.put(url, headers: {
       'Accept': 'application/json',
       'Authorization': 'Bearer $value'
     }, body: {
-      "nombreempresa": nombreempresa,
-      'razonsocial': razonsocial,
-      'nombreproveedor': nombreproveedor,
-      "numcontacto": "$numcontacto"
+      'nombreproducto': nombreproducto,
+      'descripcion': descripcion,
+      'unidad': unidad,
+      'existencia': existencia.toString(),
+      'costo': costo.toString()
     }).then((response) {
       print('Response status : ${response.statusCode}');
       print('Response body : ${response.body}');
     });
   }
 
-  void removeProveedor(String id) async {
+  void removeProducto(String id) async {
     final prefs = await SharedPreferences.getInstance();
     const key = 'token';
     final value = prefs.get(key) ?? 0;
-    var url = Uri.parse('${baseURL}proveedor/destroy/$id');
+    var url = Uri.parse('${baseURL}productos/destroy/$id');
 
     http.delete(url, headers: {
       'Accept': 'application/json',
@@ -71,12 +72,12 @@ class ProveedorServices {
     });
   }
 
-  Future<List<Map<String, dynamic>>> getData() async {
+  Future<List<Map<String, dynamic>>> getDataProductos() async {
     final prefs = await SharedPreferences.getInstance();
     const key = 'token';
     final value = prefs.get(key) ?? 0;
 
-    var url = Uri.parse('${baseURL}proveedor/showto');
+    var url = Uri.parse('${baseURL}productos/showto');
 
     final response = await http.get(
       url,

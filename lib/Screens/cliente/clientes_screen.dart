@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:torrico_import/Screens/cliente/addCliente.dart';
+import 'package:torrico_import/Screens/cliente/widgetsCliente/item_ListCliente.dart';
+import 'package:torrico_import/services/cliente_services.dart';
 
 class ClientesScreen extends StatefulWidget {
-  const ClientesScreen({super.key});
+  const ClientesScreen({Key? key}) : super(key: key);
 
   @override
   State<ClientesScreen> createState() => _ClientesScreenState();
@@ -11,23 +14,40 @@ class _ClientesScreenState extends State<ClientesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/background.png'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+      backgroundColor:
+          Colors.transparent, // Hacer el fondo del Scaffold transparente
+      body: Container(
+        decoration: BoxDecoration(
+          // Usar la imagen como fondo del contenedor
+          image: DecorationImage(
+            image: AssetImage(
+                'assets/images/background.png'), // Reemplaza "tu_imagen_de_fondo.jpg" con la ruta de tu imagen
+            fit: BoxFit.cover,
           ),
-        ],
+        ),
+        child: FutureBuilder<List<Map<String, dynamic>>>(
+          future: ClienteServices().getDataCliente(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError && snapshot.data == null) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            if (snapshot.data!.isEmpty) {
+              return Text("Sin data", style: TextStyle(color: Colors.red));
+            }
+            return ItemListCliente(list: snapshot.data!);
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const addCliente()),
+          );
+        },
         child: Icon(
           Icons.add,
           color: Colors.white,

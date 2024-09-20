@@ -35,7 +35,7 @@ class _PedidosState extends State<Pedidos> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      /* floatingActionButton: FloatingActionButton(
         onPressed: () {},
         child: Icon(
           Icons.add,
@@ -49,7 +49,7 @@ class _PedidosState extends State<Pedidos> {
         mini: false,
         elevation: 15,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,*/
     );
   }
 }
